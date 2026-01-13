@@ -1,0 +1,20 @@
+<h2>Lista de categorias:</h2>
+
+{{#each categorias}}
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5>{{nome}}</h5>
+      <small>Slug: {{slug}}</small><br>
+      <a href="/admin/categorias/edit/{{_id}}"><button class="btn btn-secondary mt-4">Editar categoria</button></a>
+      <a href="/admin/categorias/delete/{{_id}}" class="btn btn-danger mt-4">Deletar</a>
+      
+    </div>
+  </div>
+{{else}}
+  <p>Nenhuma categoria cadastrada.</p>
+{{/each}}
+
+<a href="/admin/categorias/add">
+  <button class="btn btn-primary mt-3">Nova categoria</button>
+</a>
+
