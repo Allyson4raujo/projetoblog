@@ -6,10 +6,6 @@ const postagemSchema = new mongoose.Schema({
     titulo:{
         type: String,
         required: true
-    }, 
-    slug:{
-        type: String,
-        required: true
     },
     descricao:{
         type:String,
@@ -30,4 +26,6 @@ const postagemSchema = new mongoose.Schema({
     }
 })
 
-mongoose.model('postagens', postagemSchema)
+// registar um model no mongoose 
+
+mongoose.model('postagens', postagemSchema) // criei um model chamado 'postagens' usando o postagemSchema

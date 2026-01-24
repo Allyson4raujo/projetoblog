@@ -9,6 +9,8 @@ const mongoose = require('mongoose') //importa a biblioteca.
 require('../models/Categoria') //carrega o schema/model da categoria.
 const categoria = mongoose.model('categorias') //pega o model registrado e guarda na variável categoria para manipular os dados no MongoDB.
 
+require('../models/postagem') // carrega o model de postagem    
+const postagem = mongoose.model('postagens') // pega o model registrado e guarda na variável categoria para manipular os dados no MongoDB.
 
 
 //Criando rotas
@@ -156,10 +158,19 @@ router.post('/categorias/delete', (req, res)=>{
     //rota que vai listar os posts
 
     router.get('/postagens', (req, res)=>{
-        res.render('admin/postagens')
+       postagem.find().lean()
+       .then((postagem)=>{
+        res.render('admin/postagens', {postagem : postagem})
+       })
+       .catch((err)=>{
+        req.flash('error_msg', 'Error ao listar postagens'+ err)
+        res.redirect('admin/postagens')
+       })
     })
 
-    router.get('/postagem/add', (req, res)=>{
+    // rota para adicionar nova postagem
+
+    router.get('/postagens/add', (req, res)=>{
         categoria.find().lean().then((categorias)=>{
             res.render('admin/addpostagem', {categorias: categorias})
         }).catch((err)=>{
@@ -167,12 +178,77 @@ router.post('/categorias/delete', (req, res)=>{
             res.redirect('/admin')
         })
     })
+    //rota que vai salvar no BD a postagem 
 
-    router.post('/postagem/nova', (req, res)=>{
+    router.post('/postagens/nova', (req, res)=>{
+        const novapostagem = {
+            titulo: req.body.titulo,
+
+            descricao: req.body.descricao,
+            conteudo: req.body.conteudo,
+            categoria: req.body.categoria
+        }
+
+        console.log('Objeto a salvar:', novapostagem)
+
+        new postagem(novapostagem).save() // criando novoso dados no BD
+        .then(()=>{
+            req.flash('success_msg', 'Postagem salva com sucesso')
+            res.redirect('/admin/postagens')
+        })
+        .catch(()=>{
+            console.log('Erro ao salvar:', err)
+            req.flash('error_msg', 'Erro ao cadastrar postagem')
+            res.redirect('/admin/postagens')
+        })
 
     })
+
+    //Rota para exibir página de confirmação de exclusão
+
+    router.get('/postagens/delete/:id', (req, res) => {
+    postagem.findOne({_id: req.params.id})
+        .populate('categoria') // Adicione isso se categoria for referência
+        .lean()
+        .then((postagem) => {
+            if(!postagem){
+                req.flash('error_msg', 'Postagem não encontrada');
+                return res.redirect('/admin/postagens');
+            }
+            
+            // Desestrutura para passar direto as propriedades
+            res.render('admin/deletepostagem', {
+                titulo: postagem.titulo,
+                descricao: postagem.descricao,
+                conteudo: postagem.conteudo,
+                categoria: postagem.categoria,
+                _id: postagem._id
+            });
+        })
+        .catch((err) => {
+            req.flash('error_msg', 'Erro ao carregar postagem');
+            res.redirect('/admin');
+        });
+});
+
+    //rota para excluir a postagem do banco de dados
+
+    router.post('/postagens/delete', (req, res)=>{
+        postagem.deleteOne({_id: req.body.id})
+        .then(()=>{
+            req.flash('success_msg', 'Postagem deletada com sucesso!')
+            res.redirect('/admin/postagens')
+        })
+        .catch((err)=>{
+            req.flash('error_msg', 'Erro ao deletar postagem')
+            res.redirect('/admin/postagens')
+        })
+    })
+
+
 
 //exportando rotas para o app.js
 
 module.exports = router
+
 

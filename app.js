@@ -8,6 +8,8 @@
     const path = require('path')
     const session = require('express-session')
     const flash = require('connect-flash')
+    require('./models/postagem')
+    const postagem = mongoose.model('postagens')
 
 //Configurações
     //sessao
@@ -27,8 +29,14 @@
             next()
         })
     // Handlebars
-        app.engine('handlebars', handlebars.engine({ defaultLayout: 'main' }))
-        app.set('view engine', 'handlebars')
+        app.engine('handlebars', handlebars.engine({ 
+        defaultLayout: 'main',
+        runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    }
+}))
+app.set('view engine', 'handlebars')
     //public
         app.use(express.static(path.join(__dirname,'public')))
 
@@ -42,7 +50,14 @@
 
 //Rotas
 app.get('/', (req, res)=>{
-    res.send('Página principal do APP')
+    postagem.find().populate('categoria') //acessando o modulo postagem e buscando todas as postagem do banco de dados
+    .then((postagens)=>{ //then(caso dê certo o resultado da postagem.find vai ser colocado na variavel postagens)
+        res.render('index', {postagem: postagens})
+    })
+    .catch((err)=>{
+        req.flash('error_msg', 'erro ao carregar postagem')
+        res.redirect('/admin')
+    })
 })
 
 app.use('/admin', admin)
