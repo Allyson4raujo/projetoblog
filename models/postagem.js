@@ -7,6 +7,11 @@ const postagemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    slug:{
+        type: String,
+        required: true
+    },
+    
     descricao:{
         type:String,
         require: true

@@ -10,6 +10,8 @@
     const flash = require('connect-flash')
     require('./models/postagem')
     const postagem = mongoose.model('postagens')
+    require('./models/Categoria')
+    const categoria = mongoose.model('categorias')
 
 //Configurações
     //sessao
@@ -50,13 +52,72 @@ app.set('view engine', 'handlebars')
 
 //Rotas
 app.get('/', (req, res)=>{
-    postagem.find().populate('categoria') //acessando o modulo postagem e buscando todas as postagem do banco de dados
-    .then((postagens)=>{ //then(caso dê certo o resultado da postagem.find vai ser colocado na variavel postagens)
+    postagem.find().populate('categoria')                   //acessando o modulo postagem e buscando todas as postagem do banco de dados
+    .then((postagens)=>{                                    //then(caso dê certo o resultado da postagem.find vai ser colocado na variavel postagens)
         res.render('index', {postagem: postagens})
     })
     .catch((err)=>{
         req.flash('error_msg', 'erro ao carregar postagem')
         res.redirect('/admin')
+    })
+})
+
+//criando rota para ler postagem
+app.get('/postagem/:slug', (req, res)=>{
+    console.log(req.params.slug)
+    postagem.findOne({slug : req.params.slug})
+    .then((postagem)=>{
+        if(postagem){
+            res.render('postagem/index', {postagem: postagem})
+        }
+        else{
+            req.flash('error_msg', 'Erro! Postagem não encontrada')
+            res.redirect('/')
+        }
+    }).catch(()=>{
+        req.flash('error_msg', 'Houve um erro interno')
+        res.redirect('/')
+    })
+
+
+})
+
+//criando rota para no navbar (categorias)
+
+app.get('/navcategorias', (req, res)=>{
+    categoria.find()
+    .then((categoria)=>{
+        res.render('categoria/index', {categoria: categoria})
+    })
+    .catch((err)=>{
+        req.flash('error_msg', 'Erro ao procurar categorias')
+        res.redirect('/')
+    })
+})
+
+//criando rota para ver linkados 
+
+app.get('/categorias/:slug', (req, res) => {
+    categoria.findOne({slug: req.params.slug}).then((categoria) => {
+        if(categoria){
+            // Adicione o .then() aqui e corrija o res.render
+            postagem.find({categoria: categoria._id}).then((postagens) => {
+                res.render('categoria/postagens', {
+                    postagens: postagens,
+                    categoria: categoria
+                })
+            }).catch((err) => {
+                req.flash('error_msg', 'Erro ao buscar postagens')
+                res.redirect('/')
+            })
+        }
+        else{
+            req.flash('error_msg', 'Esta categoria não existe')
+            res.redirect('/')
+        }
+    }).catch((err) => {
+        req.flash('error_msg', 'Erro ao buscar categoria')
+        res.redirect('/')
     })
 })
 

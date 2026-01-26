@@ -11,6 +11,9 @@
       <li class="nav-item">
         <a class="nav-link" href="#">Sobre</a>
       </li>
+       <li class="nav-item">
+        <a class="nav-link" href="/navcategorias">Categorias</a>
+      </li>
     </ul>
   </div>
 </nav>
@@ -33,9 +36,11 @@
     <div class="card mt-1">
         <div class="card-body">
             <h5>{{titulo}}</h5>
-            <p>descrição: {{descricao}}</p>
-            <p>conteúdo: {{conteudo}}</p>
-            <small>{{data}}</small>
+            <p>Slug: {{slug}}</p>
+            <p>Descrição: {{descricao}}</p>
+            <p>Conteúdo: {{conteudo}}</p>
+            <small>{{data}}</small><br>
+            <a href="/postagem/{{slug}}"><button type="button" class="btn btn-primary">Ler postagem</button></a>
         </div>
     </div>
 

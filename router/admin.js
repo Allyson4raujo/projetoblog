@@ -183,7 +183,7 @@ router.post('/categorias/delete', (req, res)=>{
     router.post('/postagens/nova', (req, res)=>{
         const novapostagem = {
             titulo: req.body.titulo,
-
+            slug: req.body.slug,
             descricao: req.body.descricao,
             conteudo: req.body.conteudo,
             categoria: req.body.categoria
