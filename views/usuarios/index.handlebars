@@ -1,0 +1,10 @@
+<h1>Usuários Cadastrados</h1>
+<br>
+{{#each usuarios}}
+    <div>
+        <p><strong>Nome:</strong> {{nome}}</p>
+        <hr>
+    </div>
+{{else}}
+    <h4>Nenhum usuário registrado</h4>
+{{/each}}

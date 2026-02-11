@@ -2,6 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
+const {eadmim} = require('../helpers/eadmim')
 
     //variaveis para trabalhar com o mongodb e criar novos cadastros no bd
 
@@ -16,7 +17,7 @@ const postagem = mongoose.model('postagens') // pega o model registrado e guarda
 //Criando rotas
     //rota principal
 
-    router.get('/', (req, res)=>{
+    router.get('/', eadmim, (req, res)=>{
         res.render('admin/index')
     })
 

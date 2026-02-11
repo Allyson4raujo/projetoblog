@@ -8,12 +8,18 @@
       <li class="nav-item active">
         <a class="nav-link" href="#">Início</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Sobre</a>
-      </li>
        <li class="nav-item">
         <a class="nav-link" href="/navcategorias">Categorias</a>
       </li>
+       {{#if user}}
+      <li class="nav-item">
+        <a class="nav-link" href="/usuarios/logout">Sair</a>
+      </li>
+      {{else}}
+      <li class="nav-item">
+        <a class="nav-link" href="/usuarios/login">Entrar</a>
+      </li>
+      {{/if}}
     </ul>
   </div>
 </nav>
@@ -24,7 +30,8 @@
     <p class="col-md-8 fs-4">
       Este é um destaque no topo da página, parecido com o antigo Jumbotron.
     </p>
-    <button class="btn btn-primary btn-lg" type="button">Crie uma conta</button>
+    <a href="/usuarios/registro"><button class="btn btn-primary btn-lg" type="button">Crie uma conta</button></a>
+    <a href="/usuarios/login"><button class="btn btn-primary btn-lg" type="button">Entre na sua conta</button></a>
   </div>
 </div>
 

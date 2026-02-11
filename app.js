@@ -1,35 +1,59 @@
 //Esse é o arquivo principal da aplicação
 //Carregando módulos
-    const express = require('express')
-    const handlebars = require('express-handlebars')
-    const mongoose = require('mongoose')
-    const app = express()
-    const admin = require('./router/admin')
-    const path = require('path')
-    const session = require('express-session')
-    const flash = require('connect-flash')
-    require('./models/postagem')
-    const postagem = mongoose.model('postagens')
-    require('./models/Categoria')
-    const categoria = mongoose.model('categorias')
+const express = require('express')
+const handlebars = require('express-handlebars')
+const mongoose = require('mongoose')
+const app = express()
+const admin = require('./router/admin')
+const path = require('path')
+const session = require('express-session')
+const flash = require('connect-flash')
+const passport = require('passport')
+
+app.use(express.urlencoded({extended: true}))  
+app.use(express.json())                      
+
+// ===== IMPORTANTE: CARREGAR MODELS ANTES DA AUTENTICAÇÃO =====
+// Carrega o modelo de postagem
+require('./models/postagem')
+const postagem = mongoose.model('postagens')
+
+// Carrega o modelo de categoria
+require('./models/Categoria')
+const categoria = mongoose.model('categorias')
+
+// ===== CARREGA O MODELO DE USUÁRIO ANTES DO PASSPORT =====
+require('./models/usuario')  // ← ADICIONE ESTA LINHA AQUI!
+
+// ===== AGORA SIM CARREGA A CONFIGURAÇÃO DO PASSPORT =====
+require('./config/autenticacao')(passport)  // ← Chama a função passando o passport
+
+// Carrega as rotas de usuário
+const usuario = require('./router/usuario')
 
 //Configurações
     //sessao
-        app.use(session({
-            secret: 'gemeos0215',
-            resave: true,
-            saveUninitialized: true,
-        }))
-        app.use(flash())
-    // Middleware
-        app.use(express.urlencoded({extended: false}))
-        app.use(express.json())
-        //sessoes
-        app.use((req, res, next)=>{
-            res.locals.success_msg = req.flash('success_msg')
-            res.locals.error_msg = req.flash('error_msg')
-            next()
-        })
+    app.use(session({
+        secret: 'gemeos0215',
+        resave: true,
+        saveUninitialized: true,
+    }))
+
+    //config passport - DEVE VIR DEPOIS DA SESSÃO
+    app.use(passport.initialize())
+    app.use(passport.session())  // Corrigido!
+
+    // flash - DEVE VIR DEPOIS DA SESSÃO
+    app.use(flash())
+    
+    // Middleware para variáveis globais (mensagens flash, usuário logado, etc)
+    app.use((req, res, next) => {
+        res.locals.success_msg = req.flash('success_msg')
+        res.locals.error_msg = req.flash('error_msg')
+        res.locals.error = req.flash('error')
+        res.locals.user = req.user || null
+        next()
+    })
     // Handlebars
         app.engine('handlebars', handlebars.engine({ 
         defaultLayout: 'main',
@@ -122,6 +146,7 @@ app.get('/categorias/:slug', (req, res) => {
 })
 
 app.use('/admin', admin)
+app.use('/usuarios', usuario)
 
 
 
