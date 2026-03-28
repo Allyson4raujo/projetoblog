@@ -28,10 +28,15 @@
   <div class="container-fluid py-5">
     <h1 class="display-5 fw-bold">Bem-vindo ao Blog do Node !</h1>
     <p class="col-md-8 fs-4">
-      Este é um destaque no topo da página, parecido com o antigo Jumbotron.
+      Este é meu blog pessoal onde compartilho projetos, aprendizados e experiências com tecnologia.
     </p>
-    <a href="/usuarios/registro"><button class="btn btn-primary btn-lg" type="button">Crie uma conta</button></a>
-    <a href="/usuarios/login"><button class="btn btn-primary btn-lg" type="button">Entre na sua conta</button></a>
+    {{#if user}}
+      <a href="/admin"><button class="btn btn-primary btn-lg" type="button">Rotas admim</button></a>
+      <a href="/usuarios"><button class="btn btn-primary btn-lg" type="button">Rotas usuario</button></a>
+    {{else}}
+      <a href="/usuarios/registro"><button class="btn btn-primary btn-lg" type="button">Crie uma conta</button></a>
+      <a href="/usuarios/login"><button class="btn btn-primary btn-lg" type="button">Entre na sua conta</button></a>
+    {{/if}}
   </div>
 </div>
 

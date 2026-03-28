@@ -63,7 +63,7 @@ const usuario = require('./router/usuario')
     }
 }))
 app.set('view engine', 'handlebars')
-    //public
+    //public // esse códio dis ao node que todos os arquivos estaticos é a pasta public
         app.use(express.static(path.join(__dirname,'public')))
 
 
